@@ -1,0 +1,29 @@
+#!/bin/bash
+
+REPO="git@github.com:entaprenua/zclint.git"
+SSH_KEY="~/.ssh/github_automation"
+
+export GIT_SSH_COMMAND="ssh -i $SSH_KEY -o IdentitiesOnly=yes"
+
+if [ ! -d ".git" ]; then
+    echo "Initializing git repo..."
+    git init
+    git remote add origin "$REPO"
+fi
+
+if ! git remote get-url origin &>/dev/null; then
+    git remote add origin "$REPO"
+fi
+
+git remote set-url origin "$REPO"
+
+git add .
+
+if git diff --cached --quiet; then
+    echo "Nothing to commit"
+else
+    MESSAGE="${1:-Auto-commit}"
+    git commit -m "$MESSAGE"
+    git branch -M master 2>/dev/null || true
+    git push -f origin master && echo ">>> Pushed successfully" || echo ">>> Push failed"
+fi
