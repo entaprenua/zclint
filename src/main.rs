@@ -102,7 +102,7 @@ fn run_check(files: &[PathBuf]) -> Result<ValidationResult, String> {
 }
 
 fn is_valid_file(path: &Path) -> bool {
-    let path_str = path.to_string_lossy();
+    let path_str = path.to_string_lossy().replace('\\', "/");
 
     // Exclude common non-source directories
     if path_str.contains("node_modules")
@@ -117,11 +117,7 @@ fn is_valid_file(path: &Path) -> bool {
     }
 
     // Exclude protected directories (platform components and lib)
-    if path_str.contains("~/components/ui/")
-        || path_str.contains("~/components\\ui\\")
-        || path_str.contains("~/lib/")
-        || path_str.contains("~/lib\\")
-    {
+    if path_str.contains("~/components/ui/") || path_str.contains("~/lib/") {
         return false;
     }
 
