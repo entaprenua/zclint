@@ -66,6 +66,9 @@ pub enum RuleId {
     NoTernary,
     NoLogicalAnd,
     NoPlainTs,
+    NoInlineFunctions,
+    NoDisallowedImports,
+    NoDisallowedPatterns,
 }
 
 impl RuleId {
@@ -76,6 +79,9 @@ impl RuleId {
             RuleId::NoTernary => "no-ternary",
             RuleId::NoLogicalAnd => "no-logical-and",
             RuleId::NoPlainTs => "no-plain-ts",
+            RuleId::NoInlineFunctions => "no-inline-functions",
+            RuleId::NoDisallowedImports => "no-disallowed-imports",
+            RuleId::NoDisallowedPatterns => "no-disallowed-patterns",
         }
     }
 
@@ -87,18 +93,24 @@ impl RuleId {
             RuleId::NoTernary => "Ternary operator not allowed",
             RuleId::NoLogicalAnd => "Logical AND operator not allowed",
             RuleId::NoPlainTs => "Plain .ts/.js file not allowed",
+            RuleId::NoInlineFunctions => "Inline function in JSX not allowed",
+            RuleId::NoDisallowedImports => "Disallowed import",
+            RuleId::NoDisallowedPatterns => "Disallowed pattern not allowed",
         }
     }
 
     pub fn fix(&self) -> &'static str {
         match self {
-            RuleId::NoEventHandlers => "Use platform components for click actions",
+            RuleId::NoEventHandlers => "Use platform components instead of event handlers",
             RuleId::NoReactivePrimitives => {
                 "Use platform components with built-in state management"
             }
             RuleId::NoTernary => "Use <Switch>/<Match> for conditional rendering",
             RuleId::NoLogicalAnd => "Use <Show when={...}> for conditional rendering",
             RuleId::NoPlainTs => "Rename to .tsx or .jsx extension",
+            RuleId::NoInlineFunctions => "Use JSX composition instead of inline functions",
+            RuleId::NoDisallowedImports => "Use only allowed imports from whitelisted packages",
+            RuleId::NoDisallowedPatterns => "Remove disallowed pattern",
         }
     }
 }

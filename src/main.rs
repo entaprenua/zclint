@@ -67,11 +67,13 @@ fn run_check(files: &[PathBuf]) -> Result<ValidationResult, String> {
         if !search_path.exists() {
             return Err(format!("File not found: {}", search_path.display()));
         } else if search_path.is_file() {
-            // Direct file - lint it
-            total_files += 1;
-            match linter.lint_file(&search_path) {
-                Ok(errors) => all_errors.extend(errors),
-                Err(e) => return Err(e),
+            // Direct file - check if valid, then lint
+            if is_valid_file(&search_path) {
+                total_files += 1;
+                match linter.lint_file(&search_path) {
+                    Ok(errors) => all_errors.extend(errors),
+                    Err(e) => return Err(e),
+                }
             }
         } else {
             // Directory - search for files
@@ -103,18 +105,27 @@ fn is_valid_file(path: &Path) -> bool {
     let path_str = path.to_string_lossy();
 
     // Exclude common non-source directories
-    !path_str.contains("node_modules")
-        && !path_str.contains("dist")
-        && !path_str.contains("build")
-        && !path_str.contains(".git")
-        && !path_str.contains(".next")
-        && !path_str.contains("zclint.config")
-        && !path_str.contains("target")
-        // Exclude protected directories
-        && !path_str.contains("components/ui/")
-        && !path_str.contains("components\\ui\\")
-        && !path_str.contains("/lib/")
-        && !path_str.contains("\\lib\\")
+    if path_str.contains("node_modules")
+        || path_str.contains("dist")
+        || path_str.contains("build")
+        || path_str.contains(".git")
+        || path_str.contains(".next")
+        || path_str.contains("zclint.config")
+        || path_str.contains("target")
+    {
+        return false;
+    }
+
+    // Exclude protected directories (platform components and lib)
+    if path_str.contains("~/components/ui/")
+        || path_str.contains("~/components\\ui\\")
+        || path_str.contains("~/lib/")
+        || path_str.contains("~/lib\\")
+    {
+        return false;
+    }
+
+    true
 }
 
 use std::path::PathBuf;

@@ -10,6 +10,7 @@ A fast, offline CLI tool for validating storefront code in a codeless component 
 - **Offline-first** - No internet required
 - **AI-friendly** - JSON output for programmatic use
 - **Simple** - Single binary, multiple commands
+- **Secure** - Blocks dangerous patterns and imports
 
 ## Installation
 
@@ -82,44 +83,85 @@ zclint init
 
 ## Rules
 
-### Event Handlers
+### 1. Allowed Imports
+
+Only specific imports from whitelisted packages are permitted.
+
+```tsx
+// ✅ Allowed
+import { splitProps, mergeProps } from "solid-js";
+import { MetaProvider, Title } from "@solidjs/meta";
+import { Router, A } from "@solidjs/router";
+import { FileRoutes } from "@solidjs/start/router";
+import { ArrowRight } from "lucide-solid";
+
+// ❌ Blocked
+import { createSignal } from "solid-js";
+import axios from "axios";
+```
+
+| Package | Allowed Imports |
+|---------|----------------|
+| `lucide-solid` | Any |
+| `solid-js` | `splitProps`, `mergeProps`, `Suspense` |
+| `@solidjs/meta` | `MetaProvider`, `Title`, `Meta`, `Link`, `Base` |
+| `@solidjs/router` | `Router`, `Routes`, `A` |
+| `@solidjs/start` | `clientOnly` |
+| `@solidjs/start/router` | `FileRoutes` |
+
+### 2. Event Handlers
+
+Any attribute starting with `on` is blocked.
 
 ```tsx
 // ❌ Blocked
-onClick, onChange, onSubmit, onInput, onMouseEnter, onMouseLeave, etc.
+<button onClick={handleClick}>
+<input onInput={handleInput}>
+<Button onCustom={handle}>
 
 // ✅ Fix
 Use platform components: <Button>, <Input>, <Select>, etc.
 ```
 
-### Reactive Primitives
+### 3. Inline Functions
+
+Inline functions returning JSX are not allowed.
 
 ```tsx
 // ❌ Blocked
-createSignal, createEffect, createMemo, createStore, createContext, etc.
+<div>{() => { return <p>hello</p>; }}</div>
 
 // ✅ Fix
-Use platform components with built-in state management.
+Use JSX composition instead of inline functions
 ```
 
-### Operators
+### 4. Disallowed Patterns
+
+The following patterns are blocked for security:
+
+| Pattern | Reason |
+|---------|--------|
+| `window` | No direct browser API access |
+| `document` | No direct DOM access |
+| `localStorage`, `sessionStorage` | No client storage |
+| `document.cookie` | No cookie manipulation |
+| `fetch`, `WebSocket`, `postMessage` | No networking |
+| `eval`, `new Function`, `setTimeout`, `setInterval` | No dynamic code execution |
+| `import()` | No dynamic imports |
+| `with` | No confusing scoping |
+| `.innerHTML`, `.outerHTML`, `dangerouslySetInnerHTML` | No XSS |
+| `<script`, `<iframe`, `<embed`, `<object` | No script injection |
+| `javascript:`, `data:` | No XSS in URLs |
+| `console` | No logging |
+| `debugger` | No debug statements |
+
+### 5. Plain TypeScript Files
+
+`.ts` and `.js` files are not allowed in user space.
 
 ```tsx
 // ❌ Blocked
-condition ? a : b          (ternary)
-condition && <Component />  (logical AND)
-
-// ✅ Fix
-<Show when={condition}>
-  <Component />
-</Show>
-```
-
-### Plain TypeScript Files
-
-```tsx
-// ❌ Blocked
-*.ts, *.js files (except index.ts, index.js)
+// utils.ts, helpers.js
 
 // ✅ Fix
 Rename to .tsx or .jsx extension.
@@ -127,10 +169,10 @@ Rename to .tsx or .jsx extension.
 
 ## Protected Directories
 
-The following directories are automatically skipped:
+The following directories are automatically skipped (platform code):
 
-- `components/ui/**` - Platform UI components
-- `lib/**` - Platform library code
+- `~/components/ui/**` - Platform UI components
+- `~/lib/**` - Platform library code
 
 ## Configuration
 
@@ -143,12 +185,14 @@ include:
 exclude:
   - "node_modules/**"
   - "dist/**"
+  - "~/components/ui/**"
+  - "~/lib/**"
 
 rules:
+  no-disallowed-imports: error
+  no-disallowed-patterns: error
   no-event-handlers: error
-  no-reactive-primitives: error
-  no-ternary: error
-  no-logical-and: error
+  no-inline-functions: error
   no-plain-ts: error
 ```
 
@@ -161,8 +205,10 @@ zclint/
 │   ├── cli/              # CLI commands and output
 │   ├── core/             # Core types and linter
 │   └── rules/            # Rule implementations
+├── rules.md              # Detailed rules documentation
+├── README.md
 ├── Cargo.toml
-└── README.md
+└── .gitignore
 ```
 
 ## License

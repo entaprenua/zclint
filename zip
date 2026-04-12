@@ -1,0 +1,9 @@
+#!/bin/bash
+
+rm -f *.zip
+
+zip -r zclint.zip . \
+  -x "target/*"
+
+echo "Created zclint.zip"
+ls -lh zclint.zip

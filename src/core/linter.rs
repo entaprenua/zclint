@@ -10,10 +10,10 @@ pub struct Linter {
 impl Linter {
     pub fn new() -> Self {
         let rules: Vec<Box<dyn Rule>> = vec![
+            Box::new(crate::rules::NoDisallowedImports),
+            Box::new(crate::rules::NoDisallowedPatterns),
             Box::new(crate::rules::NoEventHandlers),
-            Box::new(crate::rules::NoReactivePrimitives),
-            Box::new(crate::rules::NoTernary),
-            Box::new(crate::rules::NoLogicalAnd),
+            Box::new(crate::rules::NoInlineFunctions),
             Box::new(crate::rules::NoPlainTs),
         ];
 
