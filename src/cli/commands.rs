@@ -29,6 +29,9 @@ pub enum Commands {
 
     /// Initialize zclint config file
     Init,
+
+    /// List all available rules
+    Rules,
 }
 
 pub fn install_hook() -> Result<()> {
@@ -78,4 +81,39 @@ rules:
     println!("Created zclint.yaml configuration file.");
 
     Ok(())
+}
+
+pub fn list_rules() {
+    use crate::rules::no_disallowed_imports::ALLOWED_IMPORTS;
+    use crate::rules::no_disallowed_patterns::DISALLOWED_PATTERNS;
+    use std::collections::HashMap;
+
+    let mut allowed_map: HashMap<String, Vec<String>> = HashMap::new();
+    for (package, imports) in ALLOWED_IMPORTS.iter() {
+        allowed_map.insert(
+            package.to_string(),
+            imports.iter().map(|s| s.to_string()).collect(),
+        );
+    }
+
+    let patterns: Vec<String> = DISALLOWED_PATTERNS
+        .iter()
+        .map(|(name, _)| name.to_string())
+        .collect();
+
+    let rules: Vec<serde_json::Value> = vec![
+        serde_json::json!({
+            "name": "no-disallowed-imports",
+            "allowed-imports": allowed_map
+        }),
+        serde_json::json!({
+            "name": "no-disallowed-patterns",
+            "patterns": patterns
+        }),
+        serde_json::json!("no-event-handlers"),
+        serde_json::json!("no-inline-functions"),
+        serde_json::json!("no-plain-ts"),
+    ];
+
+    println!("{}", serde_json::to_string_pretty(&rules).unwrap());
 }

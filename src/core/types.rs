@@ -62,9 +62,6 @@ impl ValidationResult {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RuleId {
     NoEventHandlers,
-    NoReactivePrimitives,
-    NoTernary,
-    NoLogicalAnd,
     NoPlainTs,
     NoInlineFunctions,
     NoDisallowedImports,
@@ -75,9 +72,6 @@ impl RuleId {
     pub fn as_str(&self) -> &'static str {
         match self {
             RuleId::NoEventHandlers => "no-event-handlers",
-            RuleId::NoReactivePrimitives => "no-reactive-primitives",
-            RuleId::NoTernary => "no-ternary",
-            RuleId::NoLogicalAnd => "no-logical-and",
             RuleId::NoPlainTs => "no-plain-ts",
             RuleId::NoInlineFunctions => "no-inline-functions",
             RuleId::NoDisallowedImports => "no-disallowed-imports",
@@ -89,9 +83,6 @@ impl RuleId {
     pub fn message(&self) -> &'static str {
         match self {
             RuleId::NoEventHandlers => "Event handler not allowed",
-            RuleId::NoReactivePrimitives => "Reactive primitive not allowed",
-            RuleId::NoTernary => "Ternary operator not allowed",
-            RuleId::NoLogicalAnd => "Logical AND operator not allowed",
             RuleId::NoPlainTs => "Plain .ts/.js file not allowed",
             RuleId::NoInlineFunctions => "Inline function in JSX not allowed",
             RuleId::NoDisallowedImports => "Disallowed import",
@@ -102,11 +93,6 @@ impl RuleId {
     pub fn fix(&self) -> &'static str {
         match self {
             RuleId::NoEventHandlers => "Use platform components instead of event handlers",
-            RuleId::NoReactivePrimitives => {
-                "Use platform components with built-in state management"
-            }
-            RuleId::NoTernary => "Use <Switch>/<Match> for conditional rendering",
-            RuleId::NoLogicalAnd => "Use <Show when={...}> for conditional rendering",
             RuleId::NoPlainTs => "Rename to .tsx or .jsx extension",
             RuleId::NoInlineFunctions => "Use JSX composition instead of inline functions",
             RuleId::NoDisallowedImports => "Use only allowed imports from whitelisted packages",

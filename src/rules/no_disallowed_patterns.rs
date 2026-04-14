@@ -4,7 +4,7 @@ use regex::Regex;
 use crate::core::types::{RuleId, ValidationError};
 use crate::rules::Rule;
 
-static DISALLOWED_PATTERNS: Lazy<Vec<(&'static str, Regex)>> = Lazy::new(|| {
+pub static DISALLOWED_PATTERNS: Lazy<Vec<(&'static str, Regex)>> = Lazy::new(|| {
     vec![
         // Browser APIs
         ("window", Regex::new(r"\bwindow\b").unwrap()),

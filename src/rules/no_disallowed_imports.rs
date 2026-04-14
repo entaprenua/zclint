@@ -4,7 +4,7 @@ use regex::Regex;
 use crate::core::types::{RuleId, ValidationError};
 use crate::rules::Rule;
 
-static ALLOWED_IMPORTS: Lazy<Vec<(&'static str, Vec<&'static str>)>> = Lazy::new(|| {
+pub static ALLOWED_IMPORTS: Lazy<Vec<(&'static str, Vec<&'static str>)>> = Lazy::new(|| {
     vec![
         ("lucide-solid", vec!["*"]), // Any import allowed
         ("solid-js", vec!["splitProps", "mergeProps", "Suspense"]),

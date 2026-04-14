@@ -49,6 +49,9 @@ fn main() {
                 std::process::exit(2);
             }
         }
+        Commands::Rules => {
+            cli::commands::list_rules();
+        }
     }
 }
 
