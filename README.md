@@ -51,6 +51,10 @@ cargo build --release
 ### CLI
 
 ```bash
+# Recommended: Validate entire project (from project root)
+# This checks all source files including config files at root
+zclint check .
+
 # Validate directory (default: current directory)
 zclint check
 
@@ -72,6 +76,8 @@ zclint install
 # Initialize config file
 zclint init
 ```
+
+> **Tip:** Run `zclint check .` from the project root to check all source files, including root config files (e.g., `*.config.ts`). This is the recommended location for SolidStart apps where source files are in `src/`.
 
 ## Exit Codes
 

@@ -104,7 +104,7 @@ fn run_check(files: &[PathBuf]) -> Result<ValidationResult, String> {
     Ok(result)
 }
 
-const USER_CAN_OVERRIDE: &[&str] = &["routes.ts"];
+const USER_CAN_OVERRIDE: &[&str] = &["src/lib/routes.ts", "src/lib/routes.js"];
 
 fn is_valid_file(path: &Path) -> bool {
     let path_str = path.to_string_lossy().replace('\\', "/");
@@ -122,11 +122,11 @@ fn is_valid_file(path: &Path) -> bool {
     }
 
     // Exclude protected directories (platform components and lib)
-    if path_str.contains("~/components/ui/") {
+    if path_str.contains("src/components/ui/") {
         return false;
     }
-    // Exclude ~/lib/ but allow user-can-override files
-    if path_str.contains("~/lib/") && !USER_CAN_OVERRIDE.iter().any(|f| path_str.contains(f)) {
+    // Exclude src/lib/ but allow user-can-override files (routes.ts, routes.js)
+    if path_str.contains("src/lib/") && !USER_CAN_OVERRIDE.iter().any(|f| path_str.ends_with(f)) {
         return false;
     }
 
