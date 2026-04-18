@@ -14,7 +14,6 @@ impl Linter {
             Box::new(crate::rules::NoDisallowedPatterns),
             Box::new(crate::rules::NoEventHandlers),
             Box::new(crate::rules::NoInlineFunctions),
-            Box::new(crate::rules::NoPlainTs),
         ];
 
         Self { rules }

@@ -81,7 +81,7 @@ fn run_check(files: &[PathBuf]) -> Result<ValidationResult, String> {
         } else {
             // Directory - search for files
             let dir_str = search_path.to_string_lossy();
-            let extensions = ["tsx", "jsx"];
+            let extensions = ["ts", "tsx", "jsx", "js"];
 
             for ext in extensions {
                 let pattern = format!("{}/**/*.{}", dir_str, ext);
@@ -104,6 +104,8 @@ fn run_check(files: &[PathBuf]) -> Result<ValidationResult, String> {
     Ok(result)
 }
 
+const USER_CAN_OVERRIDE: &[&str] = &["routes.ts"];
+
 fn is_valid_file(path: &Path) -> bool {
     let path_str = path.to_string_lossy().replace('\\', "/");
 
@@ -120,7 +122,11 @@ fn is_valid_file(path: &Path) -> bool {
     }
 
     // Exclude protected directories (platform components and lib)
-    if path_str.contains("~/components/ui/") || path_str.contains("~/lib/") {
+    if path_str.contains("~/components/ui/") {
+        return false;
+    }
+    // Exclude ~/lib/ but allow user-can-override files
+    if path_str.contains("~/lib/") && !USER_CAN_OVERRIDE.iter().any(|f| path_str.contains(f)) {
         return false;
     }
 

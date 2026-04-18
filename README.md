@@ -150,50 +150,46 @@ The following patterns are blocked for security:
 | `import()` | No dynamic imports |
 | `with` | No confusing scoping |
 | `.innerHTML`, `.outerHTML`, `dangerouslySetInnerHTML` | No XSS |
-| `<script`, `<iframe`, `<embed`, `<object` | No script injection |
+| `<script>`, `<iframe>`, `<embed>`, `<object` | No script injection |
 | `javascript:`, `data:` | No XSS in URLs |
 | `console` | No logging |
 | `debugger` | No debug statements |
-
-### 5. Plain TypeScript Files
-
-`.ts` and `.js` files are not allowed in user space.
-
-```tsx
-// ❌ Blocked
-// utils.ts, helpers.js
-
-// ✅ Fix
-Rename to .tsx or .jsx extension.
-```
 
 ## Protected Directories
 
 The following directories are automatically skipped (platform code):
 
 - `~/components/ui/**` - Platform UI components
-- `~/lib/**` - Platform library code
+- `~/lib/**` - Platform library code (except user-can-override files)
+
+### User-Can-Override Files
+
+Users can override specific files in protected directories:
+
+- `~/lib/routes.ts` - Custom route definitions
 
 ## Configuration
 
-Create a `zclint.yaml` config file:
+Note: The linter automatically skips protected directories (`~/components/ui/**`, `~/lib/**`) in code. The exclude list in config is for additional patterns.
 
 ```yaml
 include:
-  - "**/*.{tsx,jsx}"
+  - "**/*.{ts,tsx,jsx,js}"
 
 exclude:
   - "node_modules/**"
   - "dist/**"
-  - "~/components/ui/**"
-  - "~/lib/**"
+  - "build/**"
+  - ".git/**"
+  - ".next/**"
+  - "target/**"
+  - "zclint.config/**"
 
 rules:
   no-disallowed-imports: error
   no-disallowed-patterns: error
   no-event-handlers: error
   no-inline-functions: error
-  no-plain-ts: error
 ```
 
 ## Project Structure

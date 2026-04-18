@@ -61,7 +61,7 @@ pub fn init_config() -> Result<()> {
     let config_content = r#"# zclint configuration
 
 include:
-  - "**/*.{tsx,jsx}"
+  - "**/*.{ts,tsx,jsx,js}"
 
 exclude:
   - "node_modules/**"
@@ -74,7 +74,6 @@ rules:
   no-reactive-primitives: error
   no-ternary: error
   no-logical-and: error
-  no-plain-ts: error
 "#;
 
     std::fs::write("zclint.yaml", config_content)?;
@@ -112,7 +111,6 @@ pub fn list_rules() {
         }),
         serde_json::json!("no-event-handlers"),
         serde_json::json!("no-inline-functions"),
-        serde_json::json!("no-plain-ts"),
     ];
 
     println!("{}", serde_json::to_string_pretty(&rules).unwrap());

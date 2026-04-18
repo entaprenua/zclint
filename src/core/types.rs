@@ -62,7 +62,6 @@ impl ValidationResult {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RuleId {
     NoEventHandlers,
-    NoPlainTs,
     NoInlineFunctions,
     NoDisallowedImports,
     NoDisallowedPatterns,
@@ -72,7 +71,6 @@ impl RuleId {
     pub fn as_str(&self) -> &'static str {
         match self {
             RuleId::NoEventHandlers => "no-event-handlers",
-            RuleId::NoPlainTs => "no-plain-ts",
             RuleId::NoInlineFunctions => "no-inline-functions",
             RuleId::NoDisallowedImports => "no-disallowed-imports",
             RuleId::NoDisallowedPatterns => "no-disallowed-patterns",
@@ -83,7 +81,6 @@ impl RuleId {
     pub fn message(&self) -> &'static str {
         match self {
             RuleId::NoEventHandlers => "Event handler not allowed",
-            RuleId::NoPlainTs => "Plain .ts/.js file not allowed",
             RuleId::NoInlineFunctions => "Inline function in JSX not allowed",
             RuleId::NoDisallowedImports => "Disallowed import",
             RuleId::NoDisallowedPatterns => "Disallowed pattern not allowed",
@@ -93,7 +90,6 @@ impl RuleId {
     pub fn fix(&self) -> &'static str {
         match self {
             RuleId::NoEventHandlers => "Use platform components instead of event handlers",
-            RuleId::NoPlainTs => "Rename to .tsx or .jsx extension",
             RuleId::NoInlineFunctions => "Use JSX composition instead of inline functions",
             RuleId::NoDisallowedImports => "Use only allowed imports from whitelisted packages",
             RuleId::NoDisallowedPatterns => "Remove disallowed pattern",
